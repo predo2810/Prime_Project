@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using CalcEngine;
+using System;
 
 public class PrimeCalculator : MonoBehaviour
 {
@@ -23,6 +25,9 @@ public class PrimeCalculator : MonoBehaviour
     public GameObject StartButt, RestartButt;
 
     public string Expression;
+    public string Formula;
+
+    public List<string> Operators = new List<string> {"+", "-", "*", "/", "^"};
 
     void Start()
     {
@@ -59,8 +64,10 @@ public class PrimeCalculator : MonoBehaviour
 
     public void StartCalculation()
     {
+        AcceptExpression();
         StartButt.SetActive(false);
         StartCoroutine(PrimeMaster());
+
 
         foreach (GameObject GO in ObjectsToHide)
         {
@@ -107,7 +114,60 @@ public class PrimeCalculator : MonoBehaviour
     {
         // No lugar de n, colocar o valor de i no for...loop.
 
-        return 0;
+        Formula = "";
+
+        foreach (char c in Expression)
+        {
+            if (c == '!' && Formula.Length - 1 <= 0)
+            {
+                Debug.LogWarning("ERROR.\nINVALID FACTORIAL POSITION.");
+                CurrentNumber.text = "Erro.\nPosição inválida de fatorial(!).";
+                RestartButt.SetActive(true);
+            }
+            else
+            {
+                Debug.Log(c);
+                if (c == 'n')
+                {
+                    if (Formula.Length - 1 >= 0)
+                    {
+                        if (Operators.Contains(Formula[Formula.Length - 1].ToString()))
+                        {
+                            Formula += N.ToString();
+                        }
+                        else
+                        {
+                            Formula += "*";
+                            Formula += N.ToString();
+                            Debug.Log("Adding Multiplication Before N.\nFormula: " + Formula);
+                        }
+                    }
+                    else
+                    {
+                        Formula += N.ToString();
+                        Debug.Log("Before Formula is null");
+                    }
+                }
+                else if (c == '!')
+                {
+                    Debug.Log("Factorial");
+                    Formula += CalcFactorial(Formula[Formula.Length - 1]).ToString();
+                }
+                else
+                {
+                    Formula += c;
+                }
+            }
+        }
+
+        var ce = new CalcEngine.CalcEngine();
+        Debug.Log(Formula);
+        var x = ce.Parse(Formula);
+        Debug.Log(x);
+        var value = x.Evaluate();
+        Debug.Log(value);
+
+        return int.Parse(value.ToString());
     }
 
     int CalcFactorial(int InitialValue)
@@ -156,21 +216,24 @@ public class PrimeCalculator : MonoBehaviour
         ExpressionText.text = Expression;
     }
 
-    public void SpecialN()
+    public void RemoveNumber()
     {
-        Expression += "n";
-        ExpressionText.text = Expression;
-    }
-
-    public void SpecialFactorial()
-    {
-        Expression += "!";
-        ExpressionText.text = Expression;
+        if (Expression.Length > 0)
+        {
+            Expression = Expression.Remove(Expression.Length - 1);
+            ExpressionText.text = Expression;
+        }
     }
 
     public void AcceptExpression()
     {
-        Debug.Log(Expression);
-        FunctionText.text = "Fórmula: " + Expression;
+        if (Expression == null || Expression == "" || Expression == " ")
+        {
+            Expression = "n+n*n";
+        }
+        else
+        {
+            FunctionText.text = "Fórmula: " + Expression;
+        }
     }
 }
