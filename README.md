@@ -1,7 +1,7 @@
 # Prime Project
  A project for calculating prime numbers.
 
-I came up with this idea while at school with my friend, trying to find the prime number calculus and after many tries, we reached only 7 numbers...
+I came up with this idea while at school with my friend, trying to find the prime number calculus. After many tries, we reached only 7 numbers...
 So, i asked myself, *why not let the computer do the whole process?*
 
 And here it is, the prime calculator program, using prime verifying and a formula input, you can try to reach the ***"master prime"***.
