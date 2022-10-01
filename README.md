@@ -18,8 +18,8 @@ Expression Input:
 
 - [CalcEngine](https://www.codeproject.com/Articles/246374/A-Calculation-Engine-for-NET)
 
-*I love this one, it was made by a brazillan too :D*
-*Yeah, i'm from Brazil*
+*I love this one, it was made by a brazillan too :D*  
+*Yeah, i'm from Brazil*  
 
 
 ## Thank You for coming to this page :)
