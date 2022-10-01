@@ -1,2 +1,2 @@
-# Prime_Project
+# Prime Project
  A project for calculating prime numbers.
