@@ -12,6 +12,9 @@ public class PrimeCalculator : MonoBehaviour
     public TMPro.TMP_Text CurrentNumber;
     public TMPro.TMP_Text ExpressionText;
 
+    public TMPro.TMP_InputField LoopInput;
+    public TMPro.TMP_InputField TimeInput;
+
     public bool isPrime;
 
     public int TimesToDo = 50;
@@ -33,9 +36,11 @@ public class PrimeCalculator : MonoBehaviour
     {
         FunctionText.text = "Fórmula: " + Expression;
 
-        var ce = new CalcEngine.CalcEngine();
-        var x = ce.Parse("3^3");
-        var value = (double)x.Evaluate();
+        TimesToDo = PlayerPrefs.GetInt("Loops", 50);
+        TimeToWait = PlayerPrefs.GetFloat("TimeToWait", 0.4f);
+
+        TimeInput.text = TimeToWait.ToString();
+        LoopInput.text = TimesToDo.ToString();
     }
 
     public void SetTime(string time)
@@ -48,6 +53,9 @@ public class PrimeCalculator : MonoBehaviour
         {
             TimeToWait = 0.4f;
         }
+
+        PlayerPrefs.SetFloat("TimeToWait", TimeToWait);
+        PlayerPrefs.Save();
     }
 
     public void SetLoop(string loop)
@@ -60,6 +68,9 @@ public class PrimeCalculator : MonoBehaviour
         {
             TimesToDo = 50;
         }
+
+        PlayerPrefs.SetInt("Loops", TimesToDo);
+        PlayerPrefs.Save();
     }
 
     public void StartCalculation()
@@ -112,19 +123,17 @@ public class PrimeCalculator : MonoBehaviour
 
     int CalcPrime(int N)
     {
-        // No lugar de n, colocar o valor de i no for...loop.
-
         Formula = "";
 
         foreach (char c in Expression)
         {
-            if (c == '!' && Formula.Length - 1 <= 0)
-            {
-                Debug.LogWarning("ERROR.\nINVALID FACTORIAL POSITION.");
-                CurrentNumber.text = "Erro.\nPosição inválida de fatorial(!).";
-                RestartButt.SetActive(true);
-            }
-            else
+            // if (c == '!' && Formula.Length - 1 <= 0)
+            // {
+            //     Debug.LogError("ERROR.\nINVALID FACTORIAL POSITION.");
+            //     CurrentNumber.text = "Erro.\nPosição inválida de fatorial(!).";
+            //     RestartButt.SetActive(true);
+            // }
+            // else
             {
                 Debug.Log(c);
                 if (c == 'n')
@@ -151,7 +160,10 @@ public class PrimeCalculator : MonoBehaviour
                 else if (c == '!')
                 {
                     Debug.Log("Factorial");
-                    Formula += CalcFactorial(Formula[Formula.Length - 1]).ToString();
+                    Debug.Log(Formula[Formula.Length - 1].ToString());
+                    int F = int.Parse(Formula[Formula.Length - 1].ToString());
+                    Formula = Formula.Remove(Formula.Length - 1);
+                    Formula += CalcFactorial(F);
                 }
                 else
                 {
@@ -184,8 +196,11 @@ public class PrimeCalculator : MonoBehaviour
 
     IEnumerator PrimeMaster()
     {
+        int TimesDone = 0;
+
         for (int i = 1; i <= TimesToDo; i++)
         {
+            TimesDone = i;
             yield return new WaitForSeconds(TimeToWait);
 
             if (isPrime)
@@ -207,6 +222,12 @@ public class PrimeCalculator : MonoBehaviour
                 RestartButt.SetActive(true);
                 break;
             }
+        }
+
+        if (TimesDone >= TimesToDo)
+        {
+            CurrentNumber.text = "Fim do Cálculo.\nÚltimo Primo: " + LastPrime.ToString();
+            RestartButt.SetActive(true);
         }
     }
 
